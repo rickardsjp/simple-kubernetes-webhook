@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/slackhq/simple-kubernetes-webhook/pkg/mutation"
@@ -50,6 +51,9 @@ func (a Admitter) ValidatePodReview() (*admissionv1.AdmissionReview, error) {
 		e := fmt.Sprintf("could not parse pod in admission review request: %v", err)
 		return reviewResponse(a.Request.UID, false, http.StatusBadRequest, e), err
 	}
+
+	// simulate a slow response
+	time.Sleep(6 * time.Second)
 
 	v := validation.NewValidator(a.Logger)
 	val, err := v.ValidatePod(pod)
